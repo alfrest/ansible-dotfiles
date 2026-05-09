@@ -16,6 +16,10 @@
       community.general.pacman:
         name:
           - zsh
+
+          - emacs
+          - ripgrep
+          - fd
         state: present
 
     - name: Change shell to zsh
