@@ -1,0 +1,24 @@
+---
+- name: Machine setup
+  hosts: localhost
+  become: true
+  connection: local
+  gather_facts: true
+
+  tasks:
+    - name: Get my user
+      ansible.builtin.set_fact:
+        remote_regular_user: >-
+          {{ ansible_facts.env.SUDO_USER
+             | default(ansible_facts.user_id, true) }}
+
+    - name: Install packages
+      community.general.pacman:
+        name:
+          - zsh
+        state: present
+
+    - name: Change shell to zsh
+      ansible.builtin.user:
+        name: "{{ remote_regular_user }}"
+        shell: /usr/bin/zsh
