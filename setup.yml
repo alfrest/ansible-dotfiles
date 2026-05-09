@@ -20,6 +20,11 @@
           - emacs
           - ripgrep
           - fd
+
+          - qt6ct
+          - qt5ct
+          - kvantum
+          - kvantum-qt5
         state: present
 
     - name: Change shell to zsh
