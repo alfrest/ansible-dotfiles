@@ -32,6 +32,7 @@
 
           - ttf-firacode-nerd
           - ttf-liberation
+          - qbittorrent
         state: present
 
     - name: Change shell to zsh
