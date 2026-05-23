@@ -17,6 +17,8 @@
         name:
           - zsh
 
+          - kitty
+          - neovim
           - emacs
           - ripgrep
           - fd
@@ -25,6 +27,8 @@
           - qt5ct
           - kvantum
           - kvantum-qt5
+
+          - nwg-look
 
           - ttf-firacode-nerd
           - ttf-liberation
