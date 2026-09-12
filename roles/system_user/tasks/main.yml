@@ -18,6 +18,17 @@
     dest: "{{ ansible_facts.env.HOME }}/.oh-my-zsh"
     depth: 1
 
+- name: Clone Zsh plugins
+  ansible.builtin.git:
+    repo: "{{ item.repo }}"
+    dest: "{{ ansible_facts.env.HOME }}/.oh-my-zsh/custom/plugins/{{ item.name }}"
+    depth: 1
+  loop:
+    - name: zsh-syntax-highlighting
+      repo: https://github.com/zsh-users/zsh-syntax-highlighting.git
+    - name: zsh-autosuggestions
+      repo: https://github.com/zsh-users/zsh-autosuggestions.git
+
 - name: Set default user shell to Zsh
   become: true
   ansible.builtin.user:
