@@ -1,0 +1,6 @@
+---
+- name: Clone Alacritty Themes repository
+  ansible.builtin.git:
+    repo: 'https://github.com/alacritty/alacritty-theme'
+    dest: "{{ ansible_facts.env.HOME }}/.config/alacritty/themes"
+    depth: 1
