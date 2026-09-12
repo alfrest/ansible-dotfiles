@@ -4,3 +4,10 @@
     repo: 'https://github.com/alacritty/alacritty-theme'
     dest: "{{ ansible_facts.env.HOME }}/.config/alacritty/themes"
     depth: 1
+
+- name: Symlink Alacritty config to repo
+  ansible.builtin.file:
+    src: "{{ role_path }}/files/alacritty.toml"
+    dest: "{{ ansible_facts.user_dir }}/.config/alacritty/alacritty.toml"
+    state: link
+    force: yes
