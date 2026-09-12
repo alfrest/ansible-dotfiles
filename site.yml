@@ -1,0 +1,7 @@
+---
+- name: Machine setup
+  hosts: localhost
+  become: true
+
+  roles:
+    - system_user
