@@ -1,6 +1,13 @@
-- name: Install packages
+- name: Install zsh on arch
   become: true
   community.general.pacman:
+    name:
+      - zsh
+    state: present
+
+- name: Install zsh on fedora
+  become: true
+  ansible.builtin.dnf5:
     name:
       - zsh
     state: present
