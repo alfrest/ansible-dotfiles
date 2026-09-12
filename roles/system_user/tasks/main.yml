@@ -1,13 +1,7 @@
-# - name: Install zsh on arch
-#   become: true
-#   community.general.pacman:
-#     name:
-#       - zsh
-#     state: present
-
-- name: Install zsh on fedora
+---
+- name: Install zsh
   become: true
-  ansible.builtin.dnf5:
+  ansible.builtin.package:
     name:
       - zsh
     state: present
