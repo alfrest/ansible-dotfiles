@@ -1,5 +1,10 @@
 # Ansible dotfiles
 
+# Run
+```bash
+ansible-playbook setup.yml --limit $(hostname) -K
+```
+
 # Structure
 ```
 dot_bootstrap/
