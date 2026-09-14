@@ -1,9 +1,9 @@
 ---
 - name: Install alacritty
-  ansible.builtin.package:
-    name:
-      - alacritty
+  community.general.pacman:
+    name: alacritty
     state: present
+  when: ansible_facts.pkg_mgr == 'pacman'
 
 - name: Clone Alacritty Themes repository
   ansible.builtin.git:
