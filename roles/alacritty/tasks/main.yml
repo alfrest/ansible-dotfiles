@@ -1,5 +1,5 @@
 ---
-- name: Install alacritty
+- name: Install alacritty on arch
   community.general.pacman:
     name: alacritty
     state: present

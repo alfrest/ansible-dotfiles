@@ -1,0 +1,5 @@
+---
+- name: Install neovim
+  community.general.package:
+    name: neovim
+    state: present
