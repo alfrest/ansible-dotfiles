@@ -6,8 +6,8 @@
     - role: system_user
       tags: [system_user, base]
 
-    - role: neovim
-      tags: [neovim, base]
+    - role: nvim
+      tags: [nvim, base]
 
     - role: fonts
       tags: [fonts, gui]
