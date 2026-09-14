@@ -1,5 +1,12 @@
 ---
 - name: Install neovim
-  community.general.package:
+  ansible.builtin.package:
     name: neovim
     state: present
+
+- name: Symlink Neovim config to repo
+  ansible.builtin.file:
+    src: "{{ role_path }}/files/nvim"
+    dest: "{{ ansible_facts.user_dir }}/.config/nvim"
+    state: link
+    force: yes
