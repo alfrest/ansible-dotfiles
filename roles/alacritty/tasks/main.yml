@@ -1,4 +1,10 @@
 ---
+- name: Install alacritty
+  ansible.builtin.package:
+    name:
+      - alacritty
+    state: present
+
 - name: Clone Alacritty Themes repository
   ansible.builtin.git:
     repo: 'https://github.com/alacritty/alacritty-theme'
