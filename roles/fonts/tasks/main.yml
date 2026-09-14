@@ -1,0 +1,17 @@
+---
+- name: Ensure target font directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_facts.user_dir }}/.local/share/fonts/FiraCode"
+    state: directory
+    mode: '0755'
+
+- name: Download and extract FiraCode Nerd Font
+  ansible.builtin.unarchive:
+    src: "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.5.1/FiraCode.zip"
+    dest: "{{ ansible_facts.user_dir }}/.local/share/fonts/FiraCode"
+    remote_src: yes
+  register: font_installed
+
+- name: Refresh font cache
+  ansible.builtin.command: fc-cache -fv
+  when: font_installed.changed

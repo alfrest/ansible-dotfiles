@@ -4,7 +4,10 @@
 
   roles:
     - role: system_user
-    - tags: [system_user, base]
+      tags: [system_user, base]
+
+    - role: fonts
+      tags: [fonts, gui]
 
     - role: alacritty
-    - tags: [alacritty, gui]
+      tags: [alacritty, gui]
