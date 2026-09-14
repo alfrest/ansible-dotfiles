@@ -1,7 +1,10 @@
 ---
 - name: Machine setup
-  hosts: localhost
+  hosts: workstations
 
   roles:
-    - system_user
-    - alacritty
+    - role: system_user
+    - tags: [system_user, base]
+
+    - role: alacritty
+    - tags: [alacritty, gui]
