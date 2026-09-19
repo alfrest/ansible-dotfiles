@@ -2,3 +2,4 @@
 # admin_username: "myuser"
 # install_gui: false
 # enable_docker: false
+ansible_become_pass: "{{ vault_sudo_password }}"

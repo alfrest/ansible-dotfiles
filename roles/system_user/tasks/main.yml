@@ -27,4 +27,5 @@
   become: true
   ansible.builtin.user:
     name: "{{ ansible_facts.user_id }}"
+    password: "{{ vault_sudo_password | password_hash('sha512') }}"
     shell: /usr/bin/zsh
