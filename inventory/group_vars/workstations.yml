@@ -1,5 +1,0 @@
----
-# Feature flags shared by all workstations
-# install_gui_apps: true
-# install_alacritty: true
-# editor: nvim

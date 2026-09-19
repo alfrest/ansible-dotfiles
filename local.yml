@@ -1,6 +1,6 @@
 ---
-- name: Machine setup
-  hosts: workstations
+- hosts: localhost
+  connection: local
 
   roles:
     - role: system_user

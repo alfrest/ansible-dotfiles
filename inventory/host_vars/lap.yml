@@ -1,6 +1,0 @@
----
-# Machine-specific settings (e.g., high-DPI display requires larger fonts)
-# alacritty_font_size: 14.0
-# additional_packages:
-#   - htop
-#   - wireguard
