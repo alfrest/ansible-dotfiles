@@ -3,6 +3,11 @@
   hosts: localhost
   connection: local
 
+  pre_tasks:
+    - name: Dynamically load host-specific variables matching system hostname
+      ansible.builtin.include_vars:
+        file: "inventories/local/host_vars/{{ ansible_facts['hostname'] }}.yml"
+
   roles:
     - role: system_user
       tags: [system_user, base]
