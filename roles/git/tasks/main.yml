@@ -1,0 +1,13 @@
+---
+- name: Install git
+  become: true
+  ansible.builtin.package:
+    name: git
+    state: present
+
+- name: Symlink git config to repo
+  ansible.builtin.file:
+    src: "{{ role_path }}/files/gitconfig"
+    dest: "{{ ansible_facts.user_dir }}/.gitconfig"
+    state: link
+    force: true

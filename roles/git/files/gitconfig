@@ -1,0 +1,7 @@
+[user]
+	name = alfrest
+	email = 21663772+alfrest@users.noreply.github.com
+[init]
+	defaultBranch = main
+[pull]
+	rebase = false

@@ -6,3 +6,4 @@ enabled_roles:
   - fonts
   - alacritty
   - niri
+  - git
