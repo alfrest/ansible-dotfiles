@@ -15,6 +15,9 @@
     - role: nvim
       tags: [nvim, base]
 
+    - role: tmux
+      tags: [tmux, base]
+
     - role: fonts
       tags: [fonts, gui]
 
