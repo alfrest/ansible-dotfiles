@@ -23,6 +23,14 @@
     - name: zsh-autosuggestions
       repo: https://github.com/zsh-users/zsh-autosuggestions.git
 
+
+- name: Symlink zshrc to repo
+  ansible.builtin.file:
+    src: "{{ role_path }}/files/zshrc"
+    dest: "{{ ansible_facts.user_dir }}/.zshrc"
+    state: link
+    force: true
+
 - name: Set default user shell to Zsh
   become: true
   ansible.builtin.user:

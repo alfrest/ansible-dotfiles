@@ -1,0 +1,27 @@
+export ZSH="$HOME/.oh-my-zsh"
+ZSH_THEME="robbyrussell"
+
+plugins=(
+  vi-mode
+  git
+  fzf
+  zsh-syntax-highlighting
+  zsh-autosuggestions
+)
+
+VI_MODE_SET_CURSOR=true
+VI_MODE_RESET_PROMPT_ON_MODE_CHANGE=true
+
+source $ZSH/oh-my-zsh.sh
+
+if [[ -n $SSH_CONNECTION ]]; then
+  export EDITOR='vim'
+else
+  export EDITOR='nvim'
+fi
+
+alias gg="lazygit"
+alias tm='tmux new -A -s main'
+
+# DOOM
+PATH="$HOME/.config/emacs/bin:$PATH"
