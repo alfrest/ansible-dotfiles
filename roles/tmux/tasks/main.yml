@@ -1,0 +1,13 @@
+---
+- name: Install tmux
+  become: true
+  ansible.builtin.package:
+    name: tmux
+    state: present
+
+- name: Symlink Tmux config to repo
+  ansible.builtin.file:
+    src: "{{ role_path }}/files/tmux.conf"
+    dest: "{{ ansible_facts.user_dir }}/.config/tmux/tmux.conf"
+    state: link
+    force: true
