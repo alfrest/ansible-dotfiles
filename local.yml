@@ -8,22 +8,8 @@
       ansible.builtin.include_vars:
         file: "inventories/local/host_vars/{{ ansible_facts['hostname'] }}.yml"
 
-  roles:
-    - role: system_user
-      tags: [system_user, base]
-
-    - role: nvim
-      tags: [nvim, base]
-
-    - role: tmux
-      tags: [tmux, base]
-
-    - role: fonts
-      tags: [fonts, gui]
-
-    - role: alacritty
-      tags: [alacritty, gui]
-
-    - role: niri
-      tags: [niri, gui]
-      when: niri | default(false) | bool
+  tasks:
+    - name: Run specified or enabled roles
+      ansible.builtin.include_role:
+        name: "{{ item }}"
+      loop: "{{ [run_role] if run_role is defined else enabled_roles }}"

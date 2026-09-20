@@ -1,3 +1,8 @@
 ---
-# install_gui: true
-# desktop_environment: "gnome"
+enabled_roles:
+  - system_user
+  - nvim
+  - tmux
+  - fonts
+  - alacritty
+  # - niri
