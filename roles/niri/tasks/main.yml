@@ -1,0 +1,17 @@
+---
+- name: Install Niri core components
+  become: true
+  community.general.pacman:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - niri
+    - xwayland-satellite
+    - xdg-desktop-portal-gnome
+    - xdg-desktop-portal-gtk
+
+- name: Deploy dynamic niri
+  ansible.builtin.template:
+    src: .config.kdl.j2
+    dest: "{{ ansible_user_dir }}/.config/niri/config.kdl"
+    mode: '0644'

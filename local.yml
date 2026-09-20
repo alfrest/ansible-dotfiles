@@ -23,3 +23,7 @@
 
     - role: alacritty
       tags: [alacritty, gui]
+
+    - role: niri
+      tags: [niri, gui]
+      when: niri | default(false) | bool
