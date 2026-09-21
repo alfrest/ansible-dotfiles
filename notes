@@ -5,3 +5,5 @@ fontconfig
 alacritty needing root to install
 niri folder not exits
 need fzf
+
+export QT_QPA_PLATFORMTHEME="xdgdesktopportal" # fix for qt
