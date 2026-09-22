@@ -7,3 +7,7 @@ enabled_roles:
   - alacritty
   - niri
   - git
+
+niri_output_name: "DP-2"
+niri_output_mode: "2560x1440@239.958"
+niri_output_scale: "1"

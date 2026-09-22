@@ -46,9 +46,9 @@ input {
 
 // You can configure outputs by their name, which you can find
 // by running `niri msg outputs` while inside a niri instance.
-output "eDP-1" {
-    mode "2560x1600@120.000"
-    scale 1.5
+output "{{ niri_output_name }}" {
+    mode "{{ niri_output_mode }}"
+    scale {{ niri_output_scale }}
     transform "normal"
     position x=0 y=0
     variable-refresh-rate

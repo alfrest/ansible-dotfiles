@@ -11,5 +11,7 @@
   tasks:
     - name: Run specified or enabled roles
       ansible.builtin.include_role:
-        name: "{{ item }}"
+        name: "{{ role_item }}"
       loop: "{{ [run_role] if run_role is defined else enabled_roles }}"
+      loop_control:
+        loop_var: role_item
