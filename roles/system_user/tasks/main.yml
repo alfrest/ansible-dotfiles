@@ -15,7 +15,7 @@
 - name: Clone Zsh plugins
   ansible.builtin.git:
     repo: "{{ item.repo }}"
-    dest: "{{ ansible_facts.user_dir }}/.oh-my-zsh/custom/plugins/{{ item.name }}"
+    dest: "{{ ansible_facts['user_dir'] }}/.oh-my-zsh/custom/plugins/{{ item.name }}"
     depth: 1
   loop:
     - name: zsh-syntax-highlighting
@@ -24,12 +24,15 @@
       repo: https://github.com/zsh-users/zsh-autosuggestions.git
 
 
-- name: Symlink zshrc to repo
+- name: Symlink config
   ansible.builtin.file:
-    src: "{{ role_path }}/files/zshrc"
-    dest: "{{ ansible_facts.user_dir }}/.zshrc"
+    src: "{{ role_path }}/files/{{ item }}"
+    dest: "{{ ansible_facts['user_dir'] }}/.{{ item }}"
     state: link
     force: true
+  loop:
+    - zshrc
+    - zshenv
 
 - name: Set default user shell to Zsh
   become: true
