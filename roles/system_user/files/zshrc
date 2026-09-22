@@ -20,8 +20,9 @@ else
   export EDITOR='nvim'
 fi
 
-alias gg="lazygit"
 alias tm='tmux new -A -s main'
 
 # DOOM
 PATH="$HOME/.config/emacs/bin:$PATH"
+
+eval "$(zoxide init zsh)"
