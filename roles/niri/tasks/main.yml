@@ -9,6 +9,7 @@
     - xwayland-satellite
     - xdg-desktop-portal-gnome
     - xdg-desktop-portal-gtk
+    - noctalia
 
 - name: Deploy dynamic niri
   ansible.builtin.template:
