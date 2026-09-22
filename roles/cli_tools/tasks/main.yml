@@ -6,4 +6,10 @@
     state: present
   loop:
     - base-devel
+    - fd
+    - fzf
     - npm
+    - ripgrep
+    - unzip
+    - yazi
+    - zoxide
