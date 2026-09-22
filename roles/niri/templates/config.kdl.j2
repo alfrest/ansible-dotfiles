@@ -215,8 +215,8 @@ binds {
     Mod+Ctrl+Shift+WheelScrollDown { move-column-right; }
     Mod+Ctrl+Shift+WheelScrollUp   { move-column-left; }
 
-    Mod+TouchpadScrollDown { spawn "qs -c noctalia-shell" "ipc" "call" "volume" "increase"; }
-    Mod+TouchpadScrollUp   { spawn "qs -c noctalia-shell" "ipc" "call" "volume" "decrease"; }
+    Mod+TouchpadScrollDown { spawn-sh "noctalia msg volume-up"; }
+    Mod+TouchpadScrollUp   { spawn-sh "noctalia msg volume-down"; }
 
     Mod+1 { focus-workspace 1; }
     Mod+2 { focus-workspace 2; }
