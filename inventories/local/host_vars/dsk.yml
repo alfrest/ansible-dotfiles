@@ -1,6 +1,7 @@
 ---
 enabled_roles:
   - system_user
+  - cli_tools
   - nvim
   - tmux
   - fonts
