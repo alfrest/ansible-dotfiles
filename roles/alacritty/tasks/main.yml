@@ -1,10 +1,10 @@
 ---
-- name: Install alacritty on arch
+- name: Install on arch
   become: true
   community.general.pacman:
     name: alacritty
     state: present
-  when: ansible_facts.pkg_mgr == 'pacman'
+  when: ansible_facts['pkg_mgr'] == 'pacman'
 
 - name: Clone Alacritty Themes repository
   ansible.builtin.git:
@@ -12,9 +12,9 @@
     dest: "{{ ansible_facts.user_dir }}/.config/alacritty/themes"
     depth: 1
 
-- name: Symlink Alacritty config to repo
+- name: Symlink config
   ansible.builtin.file:
     src: "{{ role_path }}/files/alacritty.toml"
-    dest: "{{ ansible_facts.user_dir }}/.config/alacritty/alacritty.toml"
+    dest: "{{ ansible_facts['user_dir'] }}/.config/alacritty/alacritty.toml"
     state: link
     force: yes
