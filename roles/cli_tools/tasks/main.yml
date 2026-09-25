@@ -13,3 +13,4 @@
     - unzip
     - yazi
     - zoxide
+  when: ansible_facts.pkg_mgr == 'pacman'
