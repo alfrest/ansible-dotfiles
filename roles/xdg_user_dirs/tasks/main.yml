@@ -4,7 +4,7 @@
   community.general.pacman:
     name: xdg-user-dirs
     state: present
-  when: ansible_facts.pkg_mgr == 'pacman'
+  when: ansible_facts['pkg_mgr'] == 'pacman'
 
 - name: Update XDG user directories for username
   ansible.builtin.command: xdg-user-dirs-update
