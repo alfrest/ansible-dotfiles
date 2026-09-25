@@ -10,6 +10,7 @@
     - xdg-desktop-portal-gnome
     - xdg-desktop-portal-gtk
     - noctalia
+    - greetd-tuigreet
 
 - name: Deploy dynamic niri
   ansible.builtin.template:
