@@ -10,7 +10,7 @@
     - xdg-desktop-portal-gnome
     - xdg-desktop-portal-gtk
     - noctalia
-    - greetd-tuigreet
+  when: ansible_facts['pkg_mgr'] == 'pacman'
 
 - name: Ensure config directory exists
   ansible.builtin.file:
