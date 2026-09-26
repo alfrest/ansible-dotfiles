@@ -1,13 +1,11 @@
 ---
 enabled_roles:
-  - zsh
-  - cli_tools
+  - base
   - nvim
   - tmux
   - fonts
   - alacritty
   - niri
-  - git
 
 niri_output_name: "DP-2"
 niri_output_mode: "2560x1440@239.958"
