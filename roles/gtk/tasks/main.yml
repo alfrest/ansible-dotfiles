@@ -1,0 +1,20 @@
+---
+- name: Install on arch
+  become: true
+  community.general.pacman:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - gnome-themes-extra
+    - adw-gtk-theme
+    - python-psutil
+    - python-gobject
+  when: ansible_facts['pkg_mgr'] == 'pacman'
+
+- name: Set GNOME desktop interface settings
+  community.general.dconf:
+    key: "/org/gnome/desktop/interface/{{ item.key }}"
+    value: "'{{ item.value }}'"
+  loop:
+    - { key: 'gtk-theme', value: 'adw-gtk3-dark' }
+    - { key: 'color-scheme', value: 'prefer-dark' }
