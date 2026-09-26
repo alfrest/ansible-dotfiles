@@ -4,14 +4,18 @@
   connection: local
 
   pre_tasks:
-    - name: Dynamically load host-specific variables matching system hostname
+    - name: Load host vars matching system hostname
       ansible.builtin.include_vars:
         file: "inventories/local/host_vars/{{ ansible_facts['hostname'] }}.yml"
+      tags: [always]
 
   tasks:
-    - name: Run specified or enabled roles
+    - name: Run roles defined in host_vars
       ansible.builtin.include_role:
         name: "{{ role_item }}"
-      loop: "{{ [run_role] if run_role is defined else enabled_roles }}"
+        apply:
+          tags: ["{{ role_item }}"]
+      loop: "{{ enabled_roles }}"
       loop_control:
         loop_var: role_item
+      tags: [always]
