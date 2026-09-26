@@ -26,3 +26,5 @@ alias tm='tmux new -A -s main'
 PATH="$HOME/.config/emacs/bin:$PATH"
 
 eval "$(zoxide init zsh)"
+
+export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/rbw/ssh-agent-socket"
