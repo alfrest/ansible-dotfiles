@@ -1,6 +1,6 @@
 ---
 enabled_roles:
-  - system_user
+  - zsh
   - cli_tools
   - nvim
   - tmux

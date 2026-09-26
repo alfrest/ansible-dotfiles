@@ -37,6 +37,5 @@
 - name: Set default user shell to Zsh
   become: true
   ansible.builtin.user:
-    name: "{{ ansible_facts.user_id }}"
-    password: "{{ vault_sudo_password | password_hash('sha512') }}"
+    name: "{{ ansible_facts['user_id'] }}"
     shell: /usr/bin/zsh
