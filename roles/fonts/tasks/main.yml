@@ -1,9 +1,13 @@
 ---
-- name: Install on fontconfig on arch
+- name: Install on arch
   become: true
   community.general.pacman:
-    name: fontconfig
+    name: "{{ item }}"
     state: present
+  loop:
+    - fontconfig
+    - inter-font
+    - adobe-source-serif-fonts
   when: ansible_facts['pkg_mgr'] == 'pacman'
 
 - name: Ensure target font directory exists
