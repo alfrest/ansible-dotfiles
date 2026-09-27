@@ -20,6 +20,13 @@
     dest: /etc/greetd/config.toml
     mode: '0644'
 
+- name: Deploy gnome-keyring template
+  become: true
+  ansible.builtin.template:
+    src: greetd
+    dest: /etc/pam.d/greetd
+    mode: '0644'
+
 - name: Enable service
   become: true
   ansible.builtin.systemd_service:
