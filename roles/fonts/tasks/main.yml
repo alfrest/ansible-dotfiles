@@ -8,6 +8,7 @@
     - fontconfig
     - inter-font
     - adobe-source-serif-fonts
+    - ttf-jetbrains-mono-nerd
   when: ansible_facts['pkg_mgr'] == 'pacman'
 
 - name: Ensure target font directory exists
@@ -23,6 +24,7 @@
     remote_src: yes
     creates: "{{ ansible_facts.user_dir }}/.local/share/fonts/FiraCode/FiraCodeNerdFont-Regular.ttf"
   register: font_installed
+  when: ansible_facts['pkg_mgr'] != 'pacman'
 
 - name: Refresh font cache
   ansible.builtin.command: fc-cache -fv
