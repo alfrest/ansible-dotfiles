@@ -1,0 +1,23 @@
+---
+- name: Install on arch
+  become: true
+  community.general.pacman:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - noctalia
+    - archlinux-wallpaper
+  when: ansible_facts['pkg_mgr'] == 'pacman'
+
+- name: Ensure config directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_facts['user_dir'] }}/.config/noctalia"
+    state: directory
+    mode: '0755'
+
+- name: Symlink config
+  ansible.builtin.file:
+    src: "{{ role_path }}/files/config.toml"
+    dest: "{{ ansible_facts['user_dir'] }}/.config/noctalia/config.toml"
+    state: link
+    force: true

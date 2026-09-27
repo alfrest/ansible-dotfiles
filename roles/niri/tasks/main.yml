@@ -10,7 +10,6 @@
     - xdg-desktop-portal-gnome
     - xdg-desktop-portal-gtk
     - gnome-keyring
-    - noctalia
   when: ansible_facts['pkg_mgr'] == 'pacman'
 
 - name: Ensure config directory exists

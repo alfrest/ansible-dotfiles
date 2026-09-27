@@ -1,0 +1,16 @@
+[bar.default]
+margin_ends = 0
+radius = 0
+
+[shell]
+font_family = "Inter"
+
+[theme]
+source = "community"
+community_palette = "ADW"
+
+[wallpaper]
+directory = "/usr/share/backgrounds/archlinux"
+
+    [wallpaper.default]
+    path = "/usr/share/backgrounds/archlinux/gritty.png"
