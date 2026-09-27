@@ -1,6 +1,0 @@
----
-dependencies:
-  - role: xdg_user_dirs
-  - role: cli_tools
-  - role: git
-  - role: zsh

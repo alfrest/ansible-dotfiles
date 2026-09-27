@@ -1,8 +1,0 @@
----
-dependencies:
-  - role: base
-  - role: tuigreet
-  - role: niri
-  - role: noctalia
-  - role: fonts
-  - role: gtk

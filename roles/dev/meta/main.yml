@@ -1,5 +1,0 @@
----
-dependencies:
-  - role: base
-  - role: nvim
-  - role: tmux
