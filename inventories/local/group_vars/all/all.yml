@@ -1,5 +1,18 @@
 ---
-# admin_username: "myuser"
-# install_gui: false
-# enable_docker: false
 ansible_become_pass: "{{ vault_sudo_password }}"
+
+profiles:
+  base:
+    - xdg_user_dirs
+    - cli_tools
+    - git
+    - zsh
+  desktop:
+    - tuigreet
+    - niri
+    - noctalia
+    - fonts
+    - gtk
+  dev:
+    - nvim
+    - tmux
