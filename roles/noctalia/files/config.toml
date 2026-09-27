@@ -4,6 +4,7 @@ radius = 0
 
 [shell]
 font_family = "Inter"
+polkit_agent = true
 
 [theme]
 source = "community"
