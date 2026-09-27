@@ -2,6 +2,10 @@
 margin_ends = 0
 radius = 0
 
+[keybinds]
+down = [ "Down", "Ctrl+n" ]
+up = [ "Up", "Ctrl+p" ]
+
 [shell]
 font_family = "Inter"
 polkit_agent = true
