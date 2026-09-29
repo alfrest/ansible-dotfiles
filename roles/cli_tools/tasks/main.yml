@@ -11,6 +11,7 @@
     - npm
     - ripgrep
     - unzip
+    - wl-clipboard
     - yazi
     - zoxide
   when: ansible_facts.pkg_mgr == 'pacman'
