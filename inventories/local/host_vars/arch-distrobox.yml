@@ -3,5 +3,6 @@ enabled_roles: >-
   {{
     profiles.base
     + profiles.dev
+    + ['fonts']
     + ['alacritty']
   }}
