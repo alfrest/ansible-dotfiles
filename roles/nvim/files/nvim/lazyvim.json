@@ -2,6 +2,7 @@
   "extras": [
     "lazyvim.plugins.extras.lang.ansible",
     "lazyvim.plugins.extras.lang.java",
+    "lazyvim.plugins.extras.lang.scala",
     "lazyvim.plugins.extras.lang.yaml"
   ],
   "install_version": 8,
