@@ -1,14 +1,40 @@
 ---
-- name: Install yay-bin on Arch Linux
+- name: Install yay-bin and setup AUR builder on Arch Linux
   when: ansible_facts['distribution'] == 'Archlinux'
   block:
 
-    - name: Check if yay is installed
-      ansible.builtin.command:
-        cmd: which yay
-      register: yay_check
-      failed_when: false
-      changed_when: false
+    - name: Ensure base-devel and git are present
+      community.general.pacman:
+        name:
+          - base-devel
+          - git
+        state: present
+      become: true
+
+    - name: Create dedicated build user for AUR tasks
+      ansible.builtin.user:
+        name: aur_builder
+        group: wheel
+        create_home: true
+        shell: /bin/bash
+        state: present
+      become: true
+
+    - name: Allow aur_builder passwordless pacman privileges
+      ansible.builtin.copy:
+        content: "aur_builder ALL=(ALL) NOPASSWD: /usr/bin/pacman"
+        dest: /etc/sudoers.d/aur_builder
+        mode: '0440'
+        validate: 'visudo -cf %s'
+      become: true
+
+    - name: Allow my user to switch to aur_builder via sudo without password
+      ansible.builtin.copy:
+        content: "ALL ALL=(aur_builder) NOPASSWD: ALL"
+        dest: /etc/sudoers.d/ansible_aur_switch
+        mode: '0440'
+        validate: 'visudo -cf %s'
+      become: true
 
     - name: Clone yay-bin repository from AUR
       ansible.builtin.git:
@@ -16,25 +42,13 @@
         dest: /tmp/yay-bin
         version: master
         force: true
-      become: false
-      when: yay_check.rc != 0
-
-    - name: Build yay-bin package using makepkg
-      ansible.builtin.command:
-        cmd: makepkg -s --noconfirm
-        chdir: /tmp/yay-bin
-      become: false
-      when: yay_check.rc != 0
-
-    - name: Install built yay package with pacman
-      ansible.builtin.shell:
-        cmd: pacman -U --noconfirm /tmp/yay-bin/*.pkg.tar.*
       become: true
-      when: yay_check.rc != 0
+      become_user: aur_builder
 
-    - name: Clean up yay-bin build directory
-      ansible.builtin.file:
-        path: /tmp/yay-bin
-        state: absent
-      become: false
-      when: yay_check.rc != 0
+    - name: Build and install yay package using makepkg
+      ansible.builtin.command:
+        cmd: makepkg -si --noconfirm
+        chdir: /tmp/yay-bin
+        creates: /usr/bin/yay
+      become: true
+      become_user: aur_builder
