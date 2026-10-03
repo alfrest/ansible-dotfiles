@@ -1,0 +1,11 @@
+---
+- name: Install aur packages
+  when: ansible_facts['distribution'] == 'Archlinux'
+  block:
+    - name: Install
+      kewlfft.aur.aur:
+        use: yay
+        name: sesh-bin
+        state: present
+      become: true
+      become_user: aur_builder

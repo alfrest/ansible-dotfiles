@@ -15,5 +15,6 @@ profiles:
     - fonts
     - gtk
   dev:
+    - aur_cli_tools
     - nvim
     - tmux
