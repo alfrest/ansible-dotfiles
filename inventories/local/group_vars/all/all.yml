@@ -7,6 +7,7 @@ profiles:
     - cli_tools
     - git
     - zsh
+    - yay
   desktop:
     - tuigreet
     - niri

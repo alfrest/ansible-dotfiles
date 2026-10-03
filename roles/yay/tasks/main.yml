@@ -1,0 +1,40 @@
+---
+- name: Install yay-bin on Arch Linux
+  when: ansible_facts['distribution'] == 'Archlinux'
+  block:
+
+    - name: Check if yay is installed
+      ansible.builtin.command:
+        cmd: which yay
+      register: yay_check
+      failed_when: false
+      changed_when: false
+
+    - name: Clone yay-bin repository from AUR
+      ansible.builtin.git:
+        repo: https://aur.archlinux.org/yay-bin.git
+        dest: /tmp/yay-bin
+        version: master
+        force: true
+      become: false
+      when: yay_check.rc != 0
+
+    - name: Build yay-bin package using makepkg
+      ansible.builtin.command:
+        cmd: makepkg -s --noconfirm
+        chdir: /tmp/yay-bin
+      become: false
+      when: yay_check.rc != 0
+
+    - name: Install built yay package with pacman
+      ansible.builtin.shell:
+        cmd: pacman -U --noconfirm /tmp/yay-bin/*.pkg.tar.*
+      become: true
+      when: yay_check.rc != 0
+
+    - name: Clean up yay-bin build directory
+      ansible.builtin.file:
+        path: /tmp/yay-bin
+        state: absent
+      become: false
+      when: yay_check.rc != 0
