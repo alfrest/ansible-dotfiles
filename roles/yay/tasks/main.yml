@@ -3,52 +3,28 @@
   when: ansible_facts['distribution'] == 'Archlinux'
   block:
 
-    - name: Ensure base-devel and git are present
-      community.general.pacman:
-        name:
-          - base-devel
-          - git
-        state: present
+    - name: Create the `aur_builder` user
       become: true
-
-    - name: Create dedicated build user for AUR tasks
       ansible.builtin.user:
         name: aur_builder
-        group: wheel
         create_home: true
-        shell: /bin/bash
-        state: present
-      become: true
+        group: wheel
 
-    - name: Allow aur_builder passwordless pacman privileges
-      ansible.builtin.copy:
-        content: "aur_builder ALL=(ALL) NOPASSWD: /usr/bin/pacman"
-        dest: /etc/sudoers.d/aur_builder
-        mode: '0440'
+    - name: Allow the `aur_builder` user to run `sudo pacman` without a password
+      become: true
+      ansible.builtin.lineinfile:
+        path: /etc/sudoers.d/11-install-aur_builder
+        line: 'aur_builder ALL=(ALL) NOPASSWD: /usr/bin/pacman'
+        create: true
+        mode: "0440"
         validate: 'visudo -cf %s'
-      become: true
 
-    - name: Allow my user to switch to aur_builder via sudo without password
-      ansible.builtin.copy:
-        content: "ALL ALL=(aur_builder) NOPASSWD: ALL"
-        dest: /etc/sudoers.d/ansible_aur_switch
-        mode: '0440'
-        validate: 'visudo -cf %s'
-      become: true
-
-    - name: Clone yay-bin repository from AUR
-      ansible.builtin.git:
-        repo: https://aur.archlinux.org/yay-bin.git
-        dest: /tmp/yay-bin
-        version: master
-        force: true
-      become: true
-      become_user: aur_builder
-
-    - name: Build and install yay package using makepkg
-      ansible.builtin.command:
-        cmd: makepkg -si --noconfirm
-        chdir: /tmp/yay-bin
-        creates: /usr/bin/yay
-      become: true
-      become_user: aur_builder
+    - name: Install
+      block:
+        - name: Install
+          kewlfft.aur.aur:
+            use: makepkg
+            name: yay-bin
+            state: present
+          become: true
+          become_user: aur_builder
