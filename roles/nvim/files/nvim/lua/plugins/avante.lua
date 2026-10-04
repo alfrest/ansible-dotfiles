@@ -1,7 +1,7 @@
 return {
   "yetone/avante.nvim",
   opts = {
-    provider = "gemini",
+    provider = "openrouter",
     providers = {
       groq = {
         __inherited_from = "openai",
