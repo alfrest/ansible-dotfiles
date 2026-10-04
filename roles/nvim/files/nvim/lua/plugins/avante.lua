@@ -2,18 +2,13 @@ return {
   "yetone/avante.nvim",
   opts = {
     provider = "gemini",
-    providers = {
-      gemini = {
-        endpoint = "https://generativelanguage.googleapis.com/v1beta/models",
-        model = "gemini-3.5-flash",
-        timeout = 30000,
-        context_window = 1048576, -- 1M+ tokens
-        extra_request_body = {
-          generationConfig = {
-            temperature = 0.75,
-          },
-        },
-      },
-    },
+    -- providers = {
+    --   groq = {
+    --     __inherited_from = "openai",
+    --     endpoint = "https://api.groq.com/openai/v1",
+    --     model = "qwen/qwen3.8-27b",
+    --     api_key_name = "GROQ_API_KEY",
+    --   },
+    -- },
   },
 }
