@@ -26,13 +26,16 @@
 
 - name: Symlink config
   ansible.builtin.file:
-    src: "{{ role_path }}/files/{{ item }}"
-    dest: "{{ ansible_facts['user_dir'] }}/.{{ item }}"
+    src: "{{ role_path }}/files/zshrc"
+    dest: "{{ ansible_facts['user_dir'] }}/.zshrc"
     state: link
     force: true
-  loop:
-    - zshrc
-    - zshenv
+
+- name: Deploy template
+  ansible.builtin.template:
+    src: zshenv.j2
+    dest: "{{ ansible_facts['user_dir'] }}/.zshenv"
+    mode: '0644'
 
 - name: Set default user shell to Zsh
   become: true
