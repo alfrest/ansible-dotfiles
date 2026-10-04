@@ -6,10 +6,12 @@
     state: present
   loop:
     - base-devel
+    - cmake
     - fd
     - fzf
     - npm
     - ripgrep
+    - rust
     - unzip
     - wl-clipboard
     - yazi

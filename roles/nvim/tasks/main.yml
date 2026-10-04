@@ -2,8 +2,11 @@
 - name: Install neovim
   become: true
   ansible.builtin.package:
-    name: neovim
+    name: "{{ item }}"
     state: present
+  loop:
+    - neovim
+    - luarocks
 
 - name: Symlink Neovim config to repo
   ansible.builtin.file:
