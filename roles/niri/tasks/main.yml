@@ -1,25 +1,28 @@
 ---
-- name: Install Niri core components
-  become: true
-  community.general.pacman:
-    name: "{{ item }}"
-    state: present
-  loop:
-    - niri
-    - xwayland-satellite
-    - xdg-desktop-portal-gnome
-    - xdg-desktop-portal-gtk
-    - gnome-keyring
-  when: ansible_facts['pkg_mgr'] == 'pacman'
+- name: niri
+  tags: [niri]
+  block:
+    - name: Install Niri core components
+      become: true
+      community.general.pacman:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - niri
+        - xwayland-satellite
+        - xdg-desktop-portal-gnome
+        - xdg-desktop-portal-gtk
+        - gnome-keyring
+      when: ansible_facts['pkg_mgr'] == 'pacman'
 
-- name: Ensure config directory exists
-  ansible.builtin.file:
-    path: "{{ ansible_facts['user_dir'] }}/.config/niri"
-    state: directory
-    mode: '0755'
+    - name: Ensure config directory exists
+      ansible.builtin.file:
+        path: "{{ ansible_facts['user_dir'] }}/.config/niri"
+        state: directory
+        mode: '0755'
 
-- name: Deploy template
-  ansible.builtin.template:
-    src: config.kdl.j2
-    dest: "{{ ansible_facts['user_dir'] }}/.config/niri/config.kdl"
-    mode: '0644'
+    - name: Deploy template
+      ansible.builtin.template:
+        src: config.kdl.j2
+        dest: "{{ ansible_facts['user_dir'] }}/.config/niri/config.kdl"
+        mode: '0644'

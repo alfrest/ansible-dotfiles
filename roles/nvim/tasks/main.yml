@@ -1,16 +1,19 @@
 ---
-- name: Install neovim
-  become: true
-  ansible.builtin.package:
-    name: "{{ item }}"
-    state: present
-  loop:
-    - neovim
-    - luarocks
+- name: nvim
+  tags: [nvim]
+  block:
+    - name: Install neovim
+      become: true
+      ansible.builtin.package:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - neovim
+        - luarocks
 
-- name: Symlink Neovim config to repo
-  ansible.builtin.file:
-    src: "{{ role_path }}/files/nvim"
-    dest: "{{ ansible_facts.user_dir }}/.config/nvim"
-    state: link
-    force: true
+    - name: Symlink Neovim config to repo
+      ansible.builtin.file:
+        src: "{{ role_path }}/files/nvim"
+        dest: "{{ ansible_facts.user_dir }}/.config/nvim"
+        state: link
+        force: true

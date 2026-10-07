@@ -1,13 +1,16 @@
 ---
-- name: Install
-  become: true
-  ansible.builtin.package:
-    name: waybar
-    state: present
+- name: waybar
+  tags: [waybar]
+  block:
+    - name: Install
+      become: true
+      ansible.builtin.package:
+        name: waybar
+        state: present
 
-- name: Symlink config
-  ansible.builtin.file:
-    src: "{{ role_path }}/files/waybar"
-    dest: "{{ ansible_facts['user_dir'] }}/.config/waybar"
-    state: link
-    force: true
+    - name: Symlink config
+      ansible.builtin.file:
+        src: "{{ role_path }}/files/waybar"
+        dest: "{{ ansible_facts['user_dir'] }}/.config/waybar"
+        state: link
+        force: true

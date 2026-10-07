@@ -1,19 +1,22 @@
 ---
-- name: Install on arch
-  become: true
-  community.general.pacman:
-    name: "{{ item }}"
-    state: present
-  loop:
-    - base-devel
-    - cmake
-    - fd
-    - fzf
-    - npm
-    - ripgrep
-    - rust
-    - unzip
-    - wl-clipboard
-    - yazi
-    - zoxide
-  when: ansible_facts.pkg_mgr == 'pacman'
+- name: cli_tools
+  tags: [cli_tools]
+  block:
+    - name: Install on arch
+      become: true
+      community.general.pacman:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - base-devel
+        - cmake
+        - fd
+        - fzf
+        - npm
+        - ripgrep
+        - rust
+        - unzip
+        - wl-clipboard
+        - yazi
+        - zoxide
+      when: ansible_facts.pkg_mgr == 'pacman'

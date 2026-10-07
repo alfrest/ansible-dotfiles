@@ -13,8 +13,6 @@
     - name: Run roles defined in host_vars
       ansible.builtin.include_role:
         name: "{{ role_item }}"
-        apply:
-          tags: ["{{ role_item }}"]
       loop: "{{ enabled_roles }}"
       loop_control:
         loop_var: role_item

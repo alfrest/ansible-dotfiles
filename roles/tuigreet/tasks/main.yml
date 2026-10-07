@@ -1,34 +1,37 @@
 ---
-- name: Install on arch
-  become: true
-  community.general.pacman:
-    name: greetd-tuigreet
-    state: present
-  when: ansible_facts['pkg_mgr'] == 'pacman'
+- name: tuigreet
+  tags: [tuigreet]
+  block:
+    - name: Install on arch
+      become: true
+      community.general.pacman:
+        name: greetd-tuigreet
+        state: present
+      when: ansible_facts['pkg_mgr'] == 'pacman'
 
-- name: Ensure config directory exists
-  become: true
-  ansible.builtin.file:
-    path: /etc/greetd
-    state: directory
-    mode: '0755'
+    - name: Ensure config directory exists
+      become: true
+      ansible.builtin.file:
+        path: /etc/greetd
+        state: directory
+        mode: '0755'
 
-- name: Deploy template
-  become: true
-  ansible.builtin.template:
-    src: config.toml.j2
-    dest: /etc/greetd/config.toml
-    mode: '0644'
+    - name: Deploy template
+      become: true
+      ansible.builtin.template:
+        src: config.toml.j2
+        dest: /etc/greetd/config.toml
+        mode: '0644'
 
-- name: Deploy gnome-keyring template
-  become: true
-  ansible.builtin.template:
-    src: greetd
-    dest: /etc/pam.d/greetd
-    mode: '0644'
+    - name: Deploy gnome-keyring template
+      become: true
+      ansible.builtin.template:
+        src: greetd
+        dest: /etc/pam.d/greetd
+        mode: '0644'
 
-- name: Enable service
-  become: true
-  ansible.builtin.systemd_service:
-    name: greetd
-    enabled: true
+    - name: Enable service
+      become: true
+      ansible.builtin.systemd_service:
+        name: greetd
+        enabled: true
