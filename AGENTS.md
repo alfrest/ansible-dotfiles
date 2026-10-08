@@ -10,12 +10,11 @@ ansible-galaxy collection install -r requirements.yml   # once; installs kewlfft
 ansible-playbook local.yml                              # apply everything this host enables
 ```
 
-`local.yml` is the only real entrypoint. `setup.yml` is a stale leftover (last touched
-2026-05) that predates the role structure: not referenced by the README, by
-`local.yml`, or by any role, and its package list duplicates what roles install.
-Don't treat it as part of the flow and don't extend it — package changes belong in roles.
+`local.yml` is the only entrypoint. `setup.yml` was removed (commit `7480559`) — it
+predated the role structure and duplicated what roles install. Package changes belong
+in roles.
 
-**Static checks (the only verification safe for an agent):**
+**Static checks (safe for an agent):**
 
 ```bash
 printf 'x\n' > /tmp/vault-pw
@@ -24,7 +23,31 @@ ANSIBLE_VAULT_PASSWORD_FILE=/tmp/vault-pw ansible-playbook local.yml --list-tags
 ANSIBLE_VAULT_PASSWORD_FILE=/tmp/vault-pw ansible-inventory --graph
 ```
 
-Do **not** run `local.yml` for real: it mutates the workstation
+**Noop sandbox — to check the dependency graph or tag behaviour without mutating
+anything.** Copy the repo to `/tmp`, swap every task file for a debug noop, drop the
+vault file, then run for real:
+
+```bash
+rm -rf /tmp/sbx && cp -r . /tmp/sbx && cd /tmp/sbx
+python3 - <<'EOF'
+import pathlib
+for f in sorted(pathlib.Path('roles').glob('*/tasks/main.yml')):
+    r = f.parts[1]
+    f.write_text(f'---\n- name: {r}\n  tags: [{r}]\n  block:\n'
+                 f'    - name: noop\n      ansible.builtin.debug: msg=noop-{r}\n')
+pathlib.Path('inventories/local/group_vars/all/vault.yml').unlink()
+EOF
+printf 'ansible_become_pass: dummy\n' > inventories/local/group_vars/all/all.yml
+ANSIBLE_VAULT_PASSWORD_FILE=/tmp/vault-pw ansible-playbook local.yml
+ANSIBLE_VAULT_PASSWORD_FILE=/tmp/vault-pw ansible-playbook local.yml --tags niri
+```
+
+Real roles still need a `tasks/main.yml` to appear in the trace — a role with only a
+`meta/main.yml` is invisible in the output, which is confusing when checking a group.
+Add a noop for those too (`base`, `gui`, `desktop`, `dev`, `dsk`, `arch-distrobox`).
+Always `rm -rf /tmp/sbx` and the dummy vault file afterwards.
+
+Do **not** run `local.yml` against the real repo: it mutates the workstation
 (sudoers, systemd services, shell, `~/.config`) and needs an unlocked Bitwarden vault.
 There is no CI, no lint config, and no test suite in this repo.
 
@@ -44,20 +67,93 @@ templated into `~/.zshenv` for nvim's avante plugin. New secret = key added to
 ## How role selection works
 
 `local.yml` loads `inventories/local/host_vars/{{ ansible_facts['hostname'] }}.yml`
-(short hostname, not FQDN) and includes each entry of `enabled_roles`. Those files
-just concatenate profiles defined in `inventories/local/group_vars/all/all.yml`
-(`base`, `desktop`, `dev`) plus extras.
+(short hostname, not FQDN) and does a **single** `include_role` on
+`machine_profile` — no loop. Each host_vars file points at one meta role:
 
-- Adding a role: put it in a profile in `all.yml`, or directly in a host_vars
-  `enabled_roles` list. `roles/waybar/` is currently in no profile — not deployed.
-- **Order matters**: `base` ends with `yay`, which creates the `aur_builder` user and
-  NOPASSWD pacman rule that `aur_cli_tools` depends on.
-- Role names are also tags (`apply: tags: ["{{ role_item }}"]`), so
-  `--tags nvim` targets one role. `--list-tags` cannot show them (dynamic include);
-  it only reports `always`.
-- Host-specific vars must exist per host: `roles/niri/templates/config.kdl.j2` requires
-  `niri_output_name`, `niri_output_mode`, `niri_output_scale`, defined only in
-  `host_vars/dsk.yml`. A new host that enables `niri` will fail without them.
+```yaml
+machine_profile: dsk             # host_vars/dsk.yml
+machine_profile: arch-distrobox  # host_vars/arch-distrobox.yml
+```
+
+That per-machine role is meta-only and lists the groups it wants; the groups pull in
+the leaf roles. Nothing else names a role — adding a role means adding it to some
+`meta/main.yml`, not editing an inventory list.
+
+### Role kinds
+
+A role is **either** a leaf with `tasks/main.yml` that does work **or** a meta-only
+groupper with `meta/main.yml` and no `tasks/main.yml`. Groups (`base`, `gui`,
+`desktop`, `dev`) and per-machine roles (`dsk`, `arch-distrobox`) are meta-only.
+
+- Adding a role: write `roles/<name>/tasks/main.yml`, then reference it from a
+  group's `meta/main.yml`.
+- `roles/waybar/` is the one exception — it has both, because it is in no group and
+  therefore not deployed anywhere. Its meta entries document what it *would* need.
+- A role that is only ever a dependency can drop its `tasks/main.yml` entirely, but
+  then it will not show up in play output or noop-sandbox traces. Keep a noop-ish
+  task file if you need to see it.
+
+### The graph
+
+Groups, from `roles/<group>/meta/main.yml`:
+
+```
+base    → xdg_user_dirs, cli_tools, git, zsh, yay
+gui     → base, fonts, alacritty
+desktop → gui, gtk, tuigreet, niri, noctalia
+dev     → base, aur_cli_tools, nvim, tmux
+dsk           → desktop, dev
+arch-distrobox → gui, dev
+```
+
+Leaf-to-leaf edges exist where one role's code actually references another:
+
+```
+zsh → git            ansible.builtin.git clones oh-my-zsh
+alacritty → git      ansible.builtin.git clones alacritty-theme
+aur_cli_tools → yay  become_user: aur_builder needs the sudoers rule yay creates
+niri → noctalia      spawn-sh-at-startup "noctalia" plus every noctalia msg hotkey
+noctalia → fonts     config.toml sets font_family = "Inter"
+tuigreet → niri      pam_gnome_keyring.so, from gnome-keyring which niri installs
+waybar → niri, fonts config.jsonc uses niri/workspaces; style.css sets JetBrainsMono
+```
+
+Execution order comes from this graph, not from list order. `yay` therefore always
+runs before `aur_cli_tools`, and `noctalia` before `niri`, regardless of how the
+`enabled_roles` list used to be concatenated.
+
+### Tags
+
+Each role tags its own tasks — a `- name: <role>` / `tags: [<role>]` / `block:`
+wrapper at the top of `tasks/main.yml`. So `--tags nvim` targets one role.
+
+- `--list-tags` reports only `always`. The `include_role` is dynamic, so role tags
+  cannot be enumerated statically. This is inherent, not fixable without replacing
+  the dynamic include.
+- `--tags <group>` and `--tags <machine>` run nothing: those roles are meta-only.
+  Tag a leaf role instead.
+- A role that is not part of this host's graph cannot be run by tag at all.
+
+### Gotchas, verified by test
+
+- `when:` on a role gates **every** role in its dependency chain, not just the role
+  it is attached to. Verified three levels deep: with the condition false, leaf and
+  grandleaf roles all report `skipping`. This is why a static `roles:` list gated on
+  `when` does work for per-host selection — but it also means `when` is not a
+  per-role opt-out.
+- `role:` cannot be templated in a static `roles:` list. `role: "{{ some_var }}"`
+  fails with `'ansible_facts' is undefined`; the name must be written out. This is
+  the main reason the dynamic `include_role` on `machine_profile` exists instead.
+- Tag inheritance through meta dependencies differs between the two forms. A static
+  `roles:` list gives a dependency the parent's tag (`desktop : noop TAGS: [desktop,
+  gui]`), so `--tags dsk` pulls the whole machine. The dynamic include does not,
+  so `--tags dsk` runs nothing.
+
+### Host-specific vars
+
+- `roles/niri/templates/config.kdl.j2` requires `niri_output_name`,
+  `niri_output_mode`, `niri_output_scale`, defined only in `host_vars/dsk.yml`. A new
+  host whose profile reaches `niri` will fail without them.
 - `inventories/local/hosts.ini` defines only `localhost`; plays target
   `hosts: localhost, connection: local`. There are no remote hosts.
 - Configs deploy to `ansible_facts.user_dir` (home of the user running ansible), so
