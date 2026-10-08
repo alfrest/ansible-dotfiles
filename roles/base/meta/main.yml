@@ -1,0 +1,7 @@
+---
+dependencies:
+  - xdg_user_dirs
+  - cli_tools
+  - git
+  - zsh
+  - yay

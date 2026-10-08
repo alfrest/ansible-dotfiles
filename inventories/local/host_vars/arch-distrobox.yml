@@ -1,8 +1,4 @@
 ---
-enabled_roles: >-
-  {{
-    profiles.base
-    + profiles.dev
-    + ['fonts']
-    + ['alacritty']
-  }}
+enabled_roles:
+  - gui
+  - dev

@@ -1,0 +1,7 @@
+---
+dependencies:
+  - gui
+  - gtk
+  - tuigreet
+  - niri
+  - noctalia
