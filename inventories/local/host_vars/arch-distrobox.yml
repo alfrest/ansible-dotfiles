@@ -1,4 +1,3 @@
 ---
 enabled_roles:
-  - gui
-  - dev
+  - arch-distrobox
