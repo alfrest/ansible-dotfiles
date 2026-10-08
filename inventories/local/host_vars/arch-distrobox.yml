@@ -1,3 +1,2 @@
 ---
-enabled_roles:
-  - arch-distrobox
+machine_profile: arch-distrobox
