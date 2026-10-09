@@ -1,6 +1,5 @@
 ---
 dependencies:
   - base
-  - aur_cli_tools
   - nvim
   - tmux

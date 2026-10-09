@@ -8,7 +8,6 @@
         name: "{{ item }}"
         state: present
       loop:
-        - base-devel
         - cmake
         - fd
         - fzf
@@ -20,3 +19,16 @@
         - yazi
         - zoxide
       when: ansible_facts.pkg_mgr == 'pacman'
+
+    - name: Install AUR cli tools on Arch Linux
+      when: ansible_facts['distribution'] == 'Archlinux'
+      block:
+        - name: Install
+          kewlfft.aur.aur:
+            use: yay
+            name: "{{ item }}"
+            state: present
+          become: true
+          become_user: aur_builder
+          loop:
+            - sesh-bin

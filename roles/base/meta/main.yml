@@ -4,4 +4,3 @@ dependencies:
   - cli_tools
   - git
   - zsh
-  - yay

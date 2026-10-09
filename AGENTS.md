@@ -98,10 +98,10 @@ groupper with `meta/main.yml` and no `tasks/main.yml`. Groups (`base`, `gui`,
 Groups, from `roles/<group>/meta/main.yml`:
 
 ```
-base    → xdg_user_dirs, cli_tools, git, zsh, yay
+base    → xdg_user_dirs, cli_tools, git, zsh
 gui     → base, fonts, alacritty
 desktop → gui, gtk, tuigreet, niri, noctalia
-dev     → base, aur_cli_tools, nvim, tmux
+dev     → base, nvim, tmux
 dsk           → desktop, dev
 arch-distrobox → gui, dev
 ```
@@ -111,7 +111,8 @@ Leaf-to-leaf edges exist where one role's code actually references another:
 ```
 zsh → git            ansible.builtin.git clones oh-my-zsh
 alacritty → git      ansible.builtin.git clones alacritty-theme
-aur_cli_tools → yay  become_user: aur_builder needs the sudoers rule yay creates
+cli_tools → yay      use: yay + become_user: aur_builder need the sudoers rule
+                     yay creates; yay also installs base-devel for makepkg
 niri → noctalia      spawn-sh-at-startup "noctalia" plus every noctalia msg hotkey
 noctalia → fonts     config.toml sets font_family = "Inter"
 tuigreet → niri      pam_gnome_keyring.so, from gnome-keyring which niri installs
@@ -119,8 +120,13 @@ waybar → niri, fonts config.jsonc uses niri/workspaces; style.css sets JetBrai
 ```
 
 Execution order comes from this graph, not from list order. `yay` therefore always
-runs before `aur_cli_tools`, and `noctalia` before `niri`, regardless of how the
-`enabled_roles` list used to be concatenated.
+runs before `cli_tools`, and `noctalia` before `niri`.
+
+`yay` is deliberately **not** listed in `base` any more. It used to be, alongside the
+separate `aur_cli_tools` role. Both are gone: repo packages and AUR packages are both
+installed by `cli_tools`, and `base-devel` moved into `yay` so the build toolchain is
+in place before anything tries to build. Listing `yay` twice (once under `base`, once
+under `cli_tools`) would be redundant but not wrong — just don't reintroduce the split.
 
 ### Tags
 
@@ -175,6 +181,9 @@ wrapper at the top of `tasks/main.yml`. So `--tags nvim` targets one role.
     `niri`, `noctalia`, `tuigreet`, `xdg_user_dirs`.
   - AUR packages go through `kewlfft.aur.aur` with `become_user: aur_builder`, and are
     guarded by `ansible_facts['distribution'] == 'Archlinux'` instead of `pkg_mgr`.
+    Only `cli_tools` and `yay` use this today. Adding a new AUR package means adding it
+    to the existing `loop:` in `cli_tools/tasks/main.yml` — do **not** spin up a new
+    role for it. Split it out only if the AUR packages stop being CLI tools.
 - Never inline secrets in `files/` — they are symlinked verbatim into dotfiles;
   route secrets through `vault.yml` into a template (see `zshenv.j2`).
 - Match existing YAML style: `---` header, `name:` on every task, 2-space indent,
