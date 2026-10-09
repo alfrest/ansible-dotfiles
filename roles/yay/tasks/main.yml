@@ -1,11 +1,10 @@
 ---
 - name: yay
-  tags: [yay]
+  tags: [yay, aur]
   block:
     - name: Set up the AUR builder and install yay on Arch Linux
       when: ansible_facts['distribution'] == 'Archlinux'
       block:
-
         - name: Install the build toolchain makepkg needs
           become: true
           community.general.pacman:
@@ -23,10 +22,10 @@
           become: true
           ansible.builtin.lineinfile:
             path: /etc/sudoers.d/11-install-aur_builder
-            line: 'aur_builder ALL=(ALL) NOPASSWD: /usr/bin/pacman'
+            line: "aur_builder ALL=(ALL) NOPASSWD: /usr/bin/pacman"
             create: true
             mode: "0440"
-            validate: 'visudo -cf %s'
+            validate: "visudo -cf %s"
 
         - name: Install yay-bin
           kewlfft.aur.aur:

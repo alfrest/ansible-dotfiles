@@ -32,3 +32,4 @@
           become_user: aur_builder
           loop:
             - sesh-bin
+      tags: [aur]
