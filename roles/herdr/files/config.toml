@@ -8,3 +8,62 @@ onboarding = false
 # Alt+Space reaches the terminal under niri, whose Mod+Space launcher bind is
 # Super+Space on a TTY.
 prefix = "alt+space"
+
+[theme]
+# Base theme only. Every token below is overridden, so this just sets the
+# fallback for anything herdr adds later. One Dark is the closest built-in to
+# VS Code Dark+; herdr has no vscode/dark+ theme of its own.
+name = "terminal"
+
+# VS Code "Dark+" palette, mapped onto herdr's tokens.
+#
+# Token roles below are measured from a rendered herdr frame, not guessed from the
+# names. This matters: surface0/surface_dim/overlay0/overlay1 are *foregrounds*,
+# not backgrounds. herdr paints the sidebar section headers ("spaces", "menu",
+# "agents", "grouped") in overlay0, the sidebar divider in surface_dim, and the
+# pane border in overlay1. Treating those names as background colours is what
+# made this unreadable -- headers rendered #333333 on a #252526 sidebar at 1.5:1.
+#
+#   panel_bg      main surface (background)   sidebar_bg    sidebar (background)
+#   active_row_bg active Space/Agent row       selection_bg  navigate-mode cursor row
+#   overlay0      sidebar section headers      surface_dim  sidebar divider |
+#   overlay1      pane border +               surface0/surface1  other chrome
+#   text          primary text                subtext0      secondary text
+#   accent        statusBar.background         blue/teal/peach/mauve/yellow  accents
+#   green         working / ok status          red           blocked / error status
+auto_switch = false
+
+[theme.custom]
+# Backgrounds
+panel_bg      = "#1E1E1E"
+sidebar_bg    = "#252526"
+active_row_bg = "#04395E"
+selection_bg  = "#264F78"
+
+# Chrome foregrounds. Kept as mid/light greys so they stay legible as text;
+# catppuccin's equivalents (#313244, #7f849c) are fine for a decorated editor
+# but too low-contrast for a sidebar you read all day.
+overlay0      = "#B4B4B4"
+surface_dim   = "#6E6E6E"
+surface0      = "#A0A0A0"
+surface1      = "#8A8A8A"
+overlay1      = "#7A7A7A"
+
+# Text
+text          = "#E5E5E5"
+subtext0      = "#C4C4C4"
+
+# Accents
+accent   = "#4DA6FF"
+blue     = "#8ECBFF"
+teal     = "#6FE0C4"
+peach    = "#F0B48A"
+mauve    = "#E6B3E6"
+yellow   = "#DCDCAA"
+green    = "#89D185"
+red      = "#FF8A80"
+
+[ui]
+# Matches theme.custom.accent; ui.accent drives borders and navigation UI, so
+# leaving it at its default (cyan) would put non-Dark+ highlights in the frame.
+accent = "#4DA6FF"
