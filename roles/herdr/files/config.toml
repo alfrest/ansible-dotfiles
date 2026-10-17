@@ -1,0 +1,10 @@
+onboarding = false
+# Herdr configuration, symlinked to ~/.config/herdr/config.toml
+# Full reference: herdr --default-config, https://herdr.dev/docs/config-reference/
+# Apply without restarting: herdr server reload-config
+
+[keys]
+# Leader key (Herdr calls it the prefix; default is "ctrl+b").
+# Alt+Space reaches the terminal under niri, whose Mod+Space launcher bind is
+# Super+Space on a TTY.
+prefix = "alt+space"
