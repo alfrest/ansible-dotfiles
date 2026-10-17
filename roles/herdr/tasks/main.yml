@@ -1,0 +1,12 @@
+---
+- name: herdr
+  tags: [herdr, aur]
+  block:
+    - name: Install herdr-bin from the AUR on Arch Linux
+      when: ansible_facts['distribution'] == 'Archlinux'
+      kewlfft.aur.aur:
+        use: yay
+        name: herdr-bin
+        state: present
+      become: true
+      become_user: aur_builder
