@@ -101,7 +101,7 @@ Groups, from `roles/<group>/meta/main.yml`:
 base    → xdg_user_dirs, cli_tools, git, zsh
 gui     → base, fonts, alacritty
 desktop → gui, gtk, tuigreet, niri, noctalia
-dev     → base, nvim, tmux
+dev     → base, nvim, tmux, herdr
 dsk           → desktop, dev
 arch-distrobox → gui, dev
 ```
@@ -181,9 +181,13 @@ wrapper at the top of `tasks/main.yml`. So `--tags nvim` targets one role.
     `niri`, `noctalia`, `tuigreet`, `xdg_user_dirs`.
   - AUR packages go through `kewlfft.aur.aur` with `become_user: aur_builder`, and are
     guarded by `ansible_facts['distribution'] == 'Archlinux'` instead of `pkg_mgr`.
-    Only `cli_tools` and `yay` use this today. Adding a new AUR package means adding it
-    to the existing `loop:` in `cli_tools/tasks/main.yml` — do **not** spin up a new
-    role for it. Split it out only if the AUR packages stop being CLI tools.
+    Only the AUR task carries the `aur` tag; the rest of the role is distro-agnostic
+    and runs everywhere. `cli_tools`, `yay`, and `herdr` use this today. Adding a new
+    AUR package means adding it to the existing `loop:` in `cli_tools/tasks/main.yml` —
+    do **not** spin up a new role for it. Split it out only if the AUR packages stop
+    being CLI tools. A role that only installs one AUR package does not need a `yay`
+    meta dependency either: on the paths that reach it, `cli_tools` has already run
+    `yay` (`dev → base → cli_tools → yay`).
 - Never inline secrets in `files/` — they are symlinked verbatim into dotfiles;
   route secrets through `vault.yml` into a template (see `zshenv.j2`).
 - Match existing YAML style: `---` header, `name:` on every task, 2-space indent,

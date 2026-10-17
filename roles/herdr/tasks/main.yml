@@ -1,8 +1,22 @@
 ---
 - name: herdr
-  tags: [herdr, aur]
+  tags: [herdr]
   block:
+    - name: Ensure config directory exists
+      ansible.builtin.file:
+        path: "{{ ansible_facts['user_dir'] }}/.config/herdr"
+        state: directory
+        mode: '0755'
+
+    - name: Symlink config
+      ansible.builtin.file:
+        src: "{{ role_path }}/files/config.toml"
+        dest: "{{ ansible_facts['user_dir'] }}/.config/herdr/config.toml"
+        state: link
+        force: true
+
     - name: Install herdr-bin from the AUR on Arch Linux
+      tags: [aur]
       when: ansible_facts['distribution'] == 'Archlinux'
       kewlfft.aur.aur:
         use: yay
