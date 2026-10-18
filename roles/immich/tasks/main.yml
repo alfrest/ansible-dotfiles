@@ -1,0 +1,41 @@
+---
+- name: immich
+  tags: [immich]
+  block:
+    - name: Ensure the immich directories exist
+      become: true
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ srv_puid }}"
+        group: "{{ srv_pgid }}"
+        mode: '0755'
+      loop:
+        - "{{ srv_container_root }}/immich"
+        - "{{ srv_container_root }}/immich/postgres"
+        - "{{ srv_storage_subvolume }}/container/immich/library"
+
+    - name: Deploy the immich environment file
+      ansible.builtin.template:
+        src: env.j2
+        dest: "{{ srv_container_root }}/immich/.env"
+        owner: "{{ srv_puid }}"
+        group: "{{ srv_pgid }}"
+        mode: '0600'
+
+    - name: Deploy the immich compose file
+      ansible.builtin.copy:
+        src: docker-compose.yml
+        dest: "{{ srv_container_root }}/immich/docker-compose.yml"
+        owner: "{{ srv_puid }}"
+        group: "{{ srv_pgid }}"
+        mode: '0644'
+
+    - name: Start or reconcile the immich stack
+      community.docker.docker_compose_v2:
+        project_src: "{{ srv_container_root }}/immich"
+        state: present
+        pull: policy
+        remove_orphans: true
+        wait: true
+        wait_timeout: 600

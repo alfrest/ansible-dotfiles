@@ -7,8 +7,8 @@ srv_timezone: "Europe/Stockholm"
 srv_puid: "1000"
 srv_pgid: "1000"
 
-# Per-stack config and database state. Bind-mounted into the containers, so the
-# paths must not live on the btrfs subvolume that snapper prunes aggressively.
+# Per-stack config and database state, bind-mounted into the containers. Large
+# media libraries live on srv_storage_subvolume instead of under here.
 srv_container_root: /srv/container
 
 # Media library shared by the servarr stack, ums and samba.

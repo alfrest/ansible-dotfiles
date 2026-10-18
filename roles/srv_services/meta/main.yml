@@ -2,3 +2,5 @@
 dependencies:
   - docker
   - storage
+  - immich
+  - nextcloud

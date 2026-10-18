@@ -1,0 +1,40 @@
+---
+- name: nextcloud
+  tags: [nextcloud]
+  block:
+    - name: Ensure the nextcloud directories exist
+      become: true
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ srv_puid }}"
+        group: "{{ srv_pgid }}"
+        mode: '0755'
+      loop:
+        - "{{ srv_container_root }}/nextcloud/config"
+        - "{{ srv_storage_subvolume }}/container/nextcloud/data"
+
+    - name: Deploy the nextcloud environment file
+      ansible.builtin.template:
+        src: env.j2
+        dest: "{{ srv_container_root }}/nextcloud/.env"
+        owner: "{{ srv_puid }}"
+        group: "{{ srv_pgid }}"
+        mode: '0600'
+
+    - name: Deploy the nextcloud compose file
+      ansible.builtin.copy:
+        src: docker-compose.yml
+        dest: "{{ srv_container_root }}/nextcloud/docker-compose.yml"
+        owner: "{{ srv_puid }}"
+        group: "{{ srv_pgid }}"
+        mode: '0644'
+
+    - name: Start or reconcile the nextcloud stack
+      community.docker.docker_compose_v2:
+        project_src: "{{ srv_container_root }}/nextcloud"
+        state: present
+        pull: policy
+        remove_orphans: true
+        wait: true
+        wait_timeout: 600

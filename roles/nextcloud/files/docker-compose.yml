@@ -1,0 +1,19 @@
+# Host specific values are interpolated from the .env next to this file, which is
+# rendered by this role from the vault. See templates/env.j2.
+
+name: nextcloud
+
+services:
+  nextcloud:
+    image: lscr.io/linuxserver/nextcloud:latest
+    container_name: nextcloud
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${CONTAINER_ROOT}/nextcloud/config:/config:z
+      - ${STORAGE_ROOT}/container/nextcloud/data:/data:z
+    ports:
+      - "8082:443"
+    restart: unless-stopped
