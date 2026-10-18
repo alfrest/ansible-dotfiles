@@ -9,6 +9,13 @@
         state: present
       when: ansible_facts['pkg_mgr'] == 'pacman'
 
+    - name: Install on debian and ubuntu
+      become: true
+      ansible.builtin.apt:
+        name: xdg-user-dirs
+        state: present
+      when: ansible_facts.pkg_mgr == 'apt'
+
     - name: Update XDG user directories for username
       ansible.builtin.command: xdg-user-dirs-update
       args:

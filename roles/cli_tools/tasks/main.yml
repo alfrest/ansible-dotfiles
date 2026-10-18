@@ -20,6 +20,61 @@
         - zoxide
       when: ansible_facts.pkg_mgr == 'pacman'
 
+    - name: Add the upstream yazi repository on debian and ubuntu
+      become: true
+      when: ansible_facts.pkg_mgr == 'apt'
+      block:
+        - name: Download the yazi signing key
+          ansible.builtin.get_url:
+            url: https://yazi-rs.github.io/builds/yazi-keyring.gpg
+            dest: /usr/share/keyrings/yazi-keyring.gpg
+            owner: root
+            group: root
+            mode: '0644'
+
+        - name: Add the yazi apt source
+          ansible.builtin.copy:
+            content: >-
+              deb [signed-by=/usr/share/keyrings/yazi-keyring.gpg]
+              https://yazi-rs.github.io/builds/ stable main
+            dest: /etc/apt/sources.list.d/yazi.list
+            owner: root
+            group: root
+            mode: '0644'
+
+        - name: Refresh the apt cache so the new source is searchable
+          ansible.builtin.apt:
+            update_cache: true
+            cache_valid_time: 0
+
+    - name: Install on debian and ubuntu
+      become: true
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+      loop:
+        - cmake
+        - fd-find
+        - fzf
+        - npm
+        - ripgrep
+        - rustc
+        - unzip
+        - wl-clipboard
+        - yazi
+        - zoxide
+      when: ansible_facts.pkg_mgr == 'apt'
+
+    - name: Link fdfind to fd
+      become: true
+      ansible.builtin.file:
+        src: /usr/bin/fdfind
+        dest: /usr/local/bin/fd
+        state: link
+      when: ansible_facts.pkg_mgr == 'apt'
+
     - name: Install AUR cli tools on Arch Linux
       when: ansible_facts['distribution'] == 'Archlinux'
       block:
