@@ -1,0 +1,5 @@
+---
+dependencies:
+  - base
+  - dev
+  - srv_services

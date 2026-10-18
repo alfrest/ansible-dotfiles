@@ -1,0 +1,28 @@
+---
+- name: docker
+  tags: [docker]
+  block:
+    - name: Install the docker engine and the compose plugin on Debian and Ubuntu
+      become: true
+      ansible.builtin.apt:
+        name:
+          - docker.io
+          - docker-compose-v2
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+      when: ansible_facts['pkg_mgr'] == 'apt'
+
+    - name: Enable and start the docker service
+      become: true
+      ansible.builtin.systemd_service:
+        name: docker
+        enabled: true
+        state: started
+
+    - name: Allow the deploy user to talk to the docker socket
+      become: true
+      ansible.builtin.user:
+        name: "{{ ansible_facts['user_id'] }}"
+        groups: docker
+        append: true

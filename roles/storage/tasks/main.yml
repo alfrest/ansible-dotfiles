@@ -1,0 +1,63 @@
+---
+- name: storage
+  tags: [storage]
+  block:
+    - name: Install snapper and the btrfs tools on Debian and Ubuntu
+      become: true
+      ansible.builtin.apt:
+        name:
+          - snapper
+          - btrfs-progs
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+      when: ansible_facts['pkg_mgr'] == 'apt'
+
+    - name: Look up the filesystem type of the subvolume to snapshot
+      become: true
+      ansible.builtin.command:
+        cmd: "findmnt --noheadings --output FSTYPE --target {{ srv_storage_subvolume }}"
+      register: srv_storage_subvolume_fstype
+      changed_when: false
+      failed_when: false
+
+    - name: Refuse to configure snapper unless the subvolume is mounted btrfs
+      ansible.builtin.assert:
+        that:
+          - srv_storage_subvolume_fstype.stdout is defined
+          - srv_storage_subvolume_fstype.stdout | trim == 'btrfs'
+        fail_msg: >-
+          {{ srv_storage_subvolume }} is not a mounted btrfs filesystem, it is
+          '{{ srv_storage_subvolume_fstype.stdout | default('', true) | trim }}'.
+          Snapper can only snapshot btrfs subvolumes, so mount it before running
+          this role instead of letting it configure snapshots against the wrong
+          filesystem.
+        success_msg: "{{ srv_storage_subvolume }} is btrfs and ready to snapshot"
+
+    - name: Ensure the snapper configuration directory exists
+      become: true
+      ansible.builtin.file:
+        path: /etc/snapper/configs
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Deploy the snapper storage config
+      become: true
+      ansible.builtin.template:
+        src: storage.j2
+        dest: /etc/snapper/configs/storage
+        owner: root
+        group: root
+        mode: '0640'
+
+    - name: Ensure the snapper systemd timers are enabled and running
+      become: true
+      ansible.builtin.systemd_service:
+        name: "{{ item }}"
+        enabled: true
+        state: started
+      loop:
+        - snapper-timeline.timer
+        - snapper-cleanup.timer
