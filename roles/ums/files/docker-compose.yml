@@ -1,0 +1,19 @@
+# Host specific values are interpolated from the .env next to this file, which is
+# rendered by this role from the vault. See templates/env.j2.
+
+name: ums
+
+services:
+  ums:
+    image: universalmediaserver/ums:latest
+    container_name: ums
+    restart: unless-stopped
+
+    ports:
+      - "1044:1044"
+      - "5001:5001"
+      - "9001:9001"
+
+    volumes:
+      - ${MEDIA_ROOT}:/root/media:z
+      - ${CONTAINER_ROOT}/ums/config:/root/.config/UMS:z

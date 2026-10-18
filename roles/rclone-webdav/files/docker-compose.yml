@@ -1,0 +1,27 @@
+# Host specific values and the webdav credentials are interpolated from the .env
+# next to this file, which is rendered by this role from the vault. See
+# templates/env.j2.
+#
+# Note that rclone takes the webdav credentials as command line flags only, so
+# they end up in the container's argv and are visible to anyone who can already
+# run `docker inspect` on the host. That is a much smaller set of people than
+# "anyone with read access to this repository", which is where they used to live.
+
+name: rclone-webdav
+
+services:
+  rclone-webdav:
+    image: docker.io/rclone/rclone:latest
+    container_name: rclone-webdav
+    restart: unless-stopped
+    user: "${PUID}:${PGID}"
+    ports:
+      - "8081:8081"
+    volumes:
+      - ${STORAGE_ROOT}:/data/storage:z
+      - ${MEDIA_ROOT}:/data/servarr:z
+    command: >
+      serve webdav /data
+      --addr :8081
+      --user ${WEBDAV_USER}
+      --pass ${WEBDAV_PASSWORD}

@@ -5,3 +5,6 @@ dependencies:
   - immich
   - nextcloud
   - servarr
+  - samba
+  - ums
+  - rclone-webdav

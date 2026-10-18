@@ -1,0 +1,22 @@
+# Host specific values and the samba credentials are interpolated from the .env
+# next to this file, which is rendered by this role from the vault. See
+# templates/env.j2.
+#
+# dperson/samba splits its -u and -s arguments on ';', so neither the password nor
+# the user may contain a semicolon or a double quote.
+
+name: samba
+
+services:
+  samba:
+    image: dperson/samba
+    container_name: samba
+    restart: unless-stopped
+    ports:
+      - "139:139"
+      - "445:445"
+    volumes:
+      - ${MEDIA_ROOT}:/mount:z
+    command: >-
+      -u "${SMB_USER};${SMB_PASSWORD};${PUID};${PGID}"
+      -s "shared;/mount;yes;no;no;${SMB_USER}"
