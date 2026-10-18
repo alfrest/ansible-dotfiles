@@ -1,0 +1,120 @@
+# Host specific values are interpolated from the .env next to this file, which is
+# rendered by this role from the vault. See templates/env.j2.
+#
+# Published ports are kept here rather than in the .env: there are too many of
+# them, and none of them is a secret.
+
+name: servarr
+
+services:
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - WEBUI_PORT=8080
+    ports:
+      - 8080:8080
+      - 6881:6881
+      - 6881:6881/udp
+    volumes:
+      - ${CONTAINER_ROOT}/qbittorrent/config:/config:z
+      - ${MEDIA_ROOT}:/data:z
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    ports:
+      - 9696:9696
+    volumes:
+      - ${CONTAINER_ROOT}/prowlarr/config:/config:z
+
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    restart: unless-stopped
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LOG_HTML=${LOG_HTML:-false}
+      - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
+      - TZ=${TZ}
+    ports:
+      - 8191:8191
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    ports:
+      - 8989:8989
+    volumes:
+      - ${CONTAINER_ROOT}/sonarr/config:/config:z
+      - ${MEDIA_ROOT}:/data:z
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    ports:
+      - 7878:7878
+    volumes:
+      - ${CONTAINER_ROOT}/radarr/config:/config:z
+      - ${MEDIA_ROOT}:/data:z
+
+  profilarr:
+    image: ghcr.io/dictionarry-hub/profilarr:latest
+    container_name: profilarr
+    restart: unless-stopped
+    ports:
+      - 6868:6868
+    volumes:
+      - ${CONTAINER_ROOT}/profilarr/config:/config:z
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - PARSER_HOST=parser
+      - PARSER_PORT=5000
+    depends_on:
+      - parser
+
+  parser:
+    image: ghcr.io/dictionarry-hub/profilarr-parser:latest
+    container_name: profilarr-parser
+    restart: unless-stopped
+    expose:
+      - 5000
+
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin:latest
+    container_name: jellyfin
+    restart: unless-stopped
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    ports:
+      - 8096:8096
+      - 7359:7359/udp
+      - 1900:1900/udp
+    devices:
+      - /dev/dri:/dev/dri
+    volumes:
+      - ${CONTAINER_ROOT}/jellyfin/config:/config:z
+      - ${MEDIA_ROOT}:/data:z

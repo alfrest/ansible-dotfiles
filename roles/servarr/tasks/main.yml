@@ -1,0 +1,45 @@
+---
+- name: servarr
+  tags: [servarr]
+  block:
+    - name: Ensure the servarr directories exist
+      become: true
+      ansible.builtin.file:
+        path: "{{ srv_container_root }}/{{ item }}/config"
+        state: directory
+        owner: "{{ srv_puid }}"
+        group: "{{ srv_pgid }}"
+        mode: '0755'
+      loop:
+        - "{{ srv_container_root }}/servarr"
+        - qbittorrent
+        - prowlarr
+        - sonarr
+        - radarr
+        - profilarr
+        - jellyfin
+
+    - name: Deploy the servarr environment file
+      ansible.builtin.template:
+        src: env.j2
+        dest: "{{ srv_container_root }}/servarr/.env"
+        owner: "{{ srv_puid }}"
+        group: "{{ srv_pgid }}"
+        mode: '0600'
+
+    - name: Deploy the servarr compose file
+      ansible.builtin.copy:
+        src: docker-compose.yml
+        dest: "{{ srv_container_root }}/servarr/docker-compose.yml"
+        owner: "{{ srv_puid }}"
+        group: "{{ srv_pgid }}"
+        mode: '0644'
+
+    - name: Start or reconcile the servarr stack
+      community.docker.docker_compose_v2:
+        project_src: "{{ srv_container_root }}/servarr"
+        state: present
+        pull: policy
+        remove_orphans: true
+        wait: true
+        wait_timeout: 600

@@ -4,3 +4,4 @@ dependencies:
   - storage
   - immich
   - nextcloud
+  - servarr
