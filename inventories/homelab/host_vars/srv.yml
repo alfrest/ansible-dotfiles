@@ -1,0 +1,19 @@
+---
+machine_profile: srv
+
+srv_timezone: "Europe/Stockholm"
+# Containers are not rootless. These are the host uid/gid of the deploy user and
+# are passed to every linuxserver.io stack through its .env.
+srv_puid: "1000"
+srv_pgid: "1000"
+
+# Per-stack config and database state. Bind-mounted into the containers, so the
+# paths must not live on the btrfs subvolume that snapper prunes aggressively.
+srv_container_root: /srv/container
+
+# Media library shared by the servarr stack, ums and samba.
+srv_media_root: /mnt/servarr
+
+# btrfs subvolume snapper snapshots. Must already be mounted when the play runs;
+# the storage role verifies this and refuses to configure snapper otherwise.
+srv_storage_subvolume: /mnt/storage

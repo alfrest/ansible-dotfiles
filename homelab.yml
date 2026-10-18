@@ -1,0 +1,10 @@
+---
+- name: Configure homelab server
+  hosts: homelab
+  connection: ssh
+
+  tasks:
+    - name: Run the roles selected for this host
+      ansible.builtin.include_role:
+        name: "{{ machine_profile }}"
+      tags: [always]
